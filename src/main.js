@@ -27,4 +27,3 @@ render(siteEventsElement, createEditformTemplate(tasks[0]));
 
 render(siteEventsElement, createEventsListTemplate(tasks));
 
-console.log(tasks);
