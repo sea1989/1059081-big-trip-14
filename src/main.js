@@ -1,11 +1,12 @@
-import { createTripInfoTemplate } from './view/trip-info.js';
+import TripInfoView from './view/trip-info.js';
 import SiteMenuView from './view/site-menu.js';
-import { createFilterTemplate } from './view/filter.js';
-import { createSortTemplate } from './view/sort.js';
-import { createEventsListTemplate, createEditformTemplate } from './view/events-list.js';
+import FilterView from './view/filter.js';
+import SortView from './view/sort.js';
+import TaskEditView from './view/edit-point.js';
+import TasksListView from './view/tasks-list.js';
+import TaskView from './view/task.js';
 import { generateTask } from './mock/task.js';
-import { renderTemplate, renderElement, RenderPosition } from './view/utils.js';
-
+import { render, RenderPosition } from './view/utils.js';
 
 const TASK_COUNT = 5;
 
@@ -17,10 +18,40 @@ const siteNavigationElement = document.querySelector('.trip-controls__navigation
 const siteFiltersElement = document.querySelector('.trip-controls__filters');
 const siteEventsElement = document.querySelector('.trip-events');
 
-renderTemplate(siteMainElement, createTripInfoTemplate(), 'afterbegin');
-renderElement(siteNavigationElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-renderTemplate(siteFiltersElement, createFilterTemplate(), 'beforeend');
-renderTemplate(siteEventsElement, createSortTemplate(), 'beforeend');
-renderTemplate(siteEventsElement, createEditformTemplate(tasks[0]), 'beforeend');
-renderTemplate(siteEventsElement, createEventsListTemplate(tasks), 'beforeend');
+const renderTask = (taskListElement, task) => {
+  const taskComponent = new TaskView(task);
+  const taskEditComponent = new TaskEditView(task);
 
+  const replaceCardToForm = () => {
+    taskListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+  };
+
+  const replaceFormToCard = () => {
+    taskListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  };
+
+  taskComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    replaceCardToForm();
+  });
+
+  taskEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+
+  render(taskListElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+const taskListComponent = new TasksListView();
+
+render(siteMainElement, new TripInfoView().getElement(), RenderPosition.AFTERBEGIN);
+render(siteNavigationElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+render(siteFiltersElement, new FilterView().getElement(), RenderPosition.BEFOREEND);
+render(siteEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND);
+render(siteEventsElement, taskListComponent.getElement(), RenderPosition.BEFOREEND);
+
+for (let i = 0; i < 5; i++) {
+  renderTask(taskListComponent.getElement(), tasks[i]);
+}
