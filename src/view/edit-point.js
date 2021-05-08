@@ -1,4 +1,4 @@
-import { createElement } from './utils.js';
+import AbstractView from './abstract.js';
 
 const BLANK_TASK = {
   id: 0,
@@ -183,25 +183,27 @@ const createEditformTemplate = (task) => {
 
 };
 
-export default class TaskEdit {
+export default class TaskEditView extends AbstractView {
+
   constructor(task = BLANK_TASK) {
+    super();
     this._task = task;
-    this._element = null;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEditformTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
 
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }

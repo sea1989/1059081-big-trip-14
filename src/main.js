@@ -6,12 +6,11 @@ import TaskEditView from './view/edit-point.js';
 import TasksListView from './view/tasks-list.js';
 import TaskView from './view/task.js';
 import { generateTask } from './mock/task.js';
-import { render, RenderPosition } from './view/utils.js';
+import { render, RenderPosition, replace } from './utils/render.js';
 
 const TASK_COUNT = 5;
 
 const tasks = new Array(TASK_COUNT).fill().map(generateTask);
-
 
 const siteMainElement = document.querySelector('.trip-main');
 const siteNavigationElement = document.querySelector('.trip-controls__navigation');
@@ -23,35 +22,32 @@ const renderTask = (taskListElement, task) => {
   const taskEditComponent = new TaskEditView(task);
 
   const replaceCardToForm = () => {
-    taskListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+    replace(taskEditComponent, taskComponent);
   };
 
   const replaceFormToCard = () => {
-    taskListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+    replace(taskComponent, taskEditComponent);
   };
 
-  taskComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-    evt.preventDefault();
+  taskComponent.setTaskBtnClickHandler(() => {
     replaceCardToForm();
   });
 
-  taskEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-    evt.preventDefault();
+  taskEditComponent.setEditClickHandler(() => {
     replaceFormToCard();
   });
 
-
-  render(taskListElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
+  render(taskListElement, taskComponent, RenderPosition.BEFOREEND);
 };
 
 const taskListComponent = new TasksListView();
 
-render(siteMainElement, new TripInfoView().getElement(), RenderPosition.AFTERBEGIN);
-render(siteNavigationElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-render(siteFiltersElement, new FilterView().getElement(), RenderPosition.BEFOREEND);
-render(siteEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND);
-render(siteEventsElement, taskListComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, new TripInfoView, RenderPosition.AFTERBEGIN);
+render(siteNavigationElement, new SiteMenuView, RenderPosition.BEFOREEND);
+render(siteFiltersElement, new FilterView, RenderPosition.BEFOREEND);
+render(siteEventsElement, new SortView, RenderPosition.BEFOREEND);
+render(siteEventsElement, taskListComponent, RenderPosition.BEFOREEND);
 
 for (let i = 0; i < 5; i++) {
-  renderTask(taskListComponent.getElement(), tasks[i]);
+  renderTask(taskListComponent, tasks[i]);
 }
