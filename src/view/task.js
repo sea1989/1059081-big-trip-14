@@ -1,4 +1,4 @@
-import { createElement } from './utils.js';
+import AbstractView from './abstract.js';
 
 const createEventTemplate = (task) => {
 
@@ -44,26 +44,26 @@ const createEventTemplate = (task) => {
 
 };
 
-export default class TaskView {
-  constructor(task) {
-    this._task = task;
+export default class TaskView extends AbstractView {
 
-    this._element = null;
+  constructor(task) {
+    super();
+    this._task = task;
+    this._TaskBtnClickHandler = this._TaskBtnClickHandler.bind(this);
+
   }
 
   getTemplate() {
     return createEventTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _TaskBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setTaskBtnClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._TaskBtnClickHandler);
   }
 }
