@@ -44,6 +44,7 @@ let nextID = 0;
 export const generateTask = () => {
   return {
     id: nextID++,
+    isFavorite: false,
     type: 'taxo',
     city: generateCities(),
     offers: [
@@ -56,7 +57,7 @@ export const generateTask = () => {
         price: 60,
       },
     ],
-    info:{
+    info: {
       description: generateDescription(),
       fotos: 'http://picsum.photos/248/152?r=Math.random()',
     },

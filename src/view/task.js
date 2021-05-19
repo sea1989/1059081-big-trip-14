@@ -29,7 +29,7 @@ const createEventTemplate = (task) => {
         <span class="event__offer-price">${task.offers[1].price}</span>
       </li>
     </ul>
-    <button class="event__favorite-btn event__favorite-btn--active" type="button">
+    <button class="event__favorite-btn ${task.isFavorite ? 'event__favorite-btn--active' : ''} " type="button">
       <span class="visually-hidden">Add to favorite</span>
       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
         <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -50,6 +50,7 @@ export default class TaskView extends AbstractView {
     super();
     this._task = task;
     this._TaskBtnClickHandler = this._TaskBtnClickHandler.bind(this);
+    this._FavoriteClickHandler = this._FavoriteClickHandler.bind(this);
 
   }
 
@@ -66,4 +67,16 @@ export default class TaskView extends AbstractView {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._TaskBtnClickHandler);
   }
+
+  _FavoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick(this._task);
+    evt.target.classList.toggle('event__favorite-btn--active');
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._FavoriteClickHandler);
+  }
+
 }
